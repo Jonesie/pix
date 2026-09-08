@@ -226,9 +226,24 @@ def admin_page():
     return FileResponse(STATIC_DIR / "admin.html")
 
 
+@app.get("/image")
+def image_page():
+    return FileResponse(STATIC_DIR / "image.html")
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True}
+
+
+@app.middleware("http")
+async def no_cache_app_shell(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path not in ("/images/thumb", "/images/full") and not request.url.path.startswith(
+        ("/images/thumb/", "/images/full/")
+    ):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")

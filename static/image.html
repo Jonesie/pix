@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>_pix_</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#34d399" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="image-view-body">
+  <header>
+    <a class="brand" href="/">_pix_</a>
+    <a class="btn btn-secondary back-btn" href="/">← Back to gallery</a>
+  </header>
+  <main class="image-page">
+    <div class="image-stage">
+      <button class="image-nav prev hidden" id="prev-btn" aria-label="Previous image">‹</button>
+      <img class="image-full" id="image-full" src="" alt="" />
+      <button class="image-nav next hidden" id="next-btn" aria-label="Next image">›</button>
+    </div>
+    <aside class="image-meta">
+      <h1 id="image-caption"></h1>
+      <p class="image-description" id="image-description"></p>
+      <p class="image-date" id="image-date"></p>
+      <div class="image-tags" id="image-tags"></div>
+    </aside>
+  </main>
+  <script src="/js/image.js"></script>
+</body>
+</html>

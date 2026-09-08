@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="theme-color" content="#34d399" />
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
@@ -24,15 +24,8 @@
   <div class="loading" id="loading" style="display:none">Loading…</div>
   <div class="empty" id="empty" style="display:none">No images yet.</div>
 
-  <div class="lightbox hidden" id="lightbox">
-    <button class="close-btn" id="close-lightbox">✕</button>
-    <button class="nav-btn nav-btn-prev" id="prev-lightbox" aria-label="Previous">‹</button>
-    <button class="nav-btn nav-btn-next" id="next-lightbox" aria-label="Next">›</button>
-    <div class="lightbox-inner" id="lightbox-inner"></div>
-  </div>
-
-  <div class="lightbox hidden" id="edit-modal">
-    <div class="lightbox-inner edit-modal-inner">
+  <div class="modal hidden" id="edit-modal">
+    <div class="modal-inner edit-modal-inner">
       <button class="close-btn" id="edit-close-btn" type="button">&times;</button>
       <h3 style="margin-top:0">Edit image</h3>
       <form id="edit-form">
