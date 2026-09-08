@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>_pix_</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">_pix_</a>
+    <input class="search-input" id="search" type="search" placeholder="Search captions & descriptions…" />
+    <button class="btn btn-secondary" id="logout-btn" style="display:none">Log out</button>
+  </header>
+  <div class="tags-row" id="tags-row"></div>
+
+  <div class="gallery" id="gallery"></div>
+  <div class="loading" id="loading" style="display:none">Loading…</div>
+  <div class="empty" id="empty" style="display:none">No images yet.</div>
+
+  <div class="lightbox hidden" id="lightbox">
+    <button class="close-btn" id="close-lightbox">✕</button>
+    <button class="nav-btn nav-btn-prev" id="prev-lightbox" aria-label="Previous">‹</button>
+    <button class="nav-btn nav-btn-next" id="next-lightbox" aria-label="Next">›</button>
+    <div class="lightbox-inner" id="lightbox-inner"></div>
+  </div>
+
+  <div class="lightbox hidden" id="edit-modal">
+    <div class="lightbox-inner edit-modal-inner">
+      <button class="close-btn" id="edit-close-btn" type="button">&times;</button>
+      <h3 style="margin-top:0">Edit image</h3>
+      <form id="edit-form">
+        <div class="field">
+          <label for="edit-caption">Caption</label>
+          <input type="text" id="edit-caption" name="caption" placeholder="Short title" />
+        </div>
+        <div class="field">
+          <label for="edit-description">Description</label>
+          <textarea id="edit-description" name="description" placeholder="Prompt, notes, story…"></textarea>
+        </div>
+        <div class="field">
+          <label for="edit-tags">Tags (comma-separated)</label>
+          <input type="text" id="edit-tags" name="tags" placeholder="cyberpunk, portrait, neon" />
+        </div>
+        <div class="field">
+          <label for="edit-created_date">Created date</label>
+          <input type="date" id="edit-created_date" name="created_date" />
+        </div>
+        <div class="field">
+          <label for="edit-sequence">Sequence number</label>
+          <input type="number" id="edit-sequence" name="sequence" placeholder="Position in the novel, e.g. 1" min="0" step="1" />
+        </div>
+        <button class="btn" id="edit-save-btn" type="submit">Save</button>
+        <div class="error-msg" id="edit-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <a href="https://www.buymeacoffee.com/jonesie">
+      <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=jonesie&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a coffee" />
+    </a>
+  </footer>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

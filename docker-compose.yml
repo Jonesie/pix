@@ -1,0 +1,12 @@
+# Standalone local run/dev. Production deploy is via ~/dev/home_nginx's
+# docker-compose.yml, which builds this same Dockerfile as service "pix"
+# on the shared home_default network.
+services:
+  pix:
+    build: .
+    image: pix:local
+    env_file: .env
+    volumes:
+      - ./data:/data
+    ports:
+      - "8000:8000"

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>_pix_ · Admin</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">_pix_</a>
+    <span style="color:var(--text-dim); font-size:14px;">Admin</span>
+    <div style="flex:1"></div>
+    <button class="btn btn-secondary" id="logout-btn" style="display:none">Log out</button>
+  </header>
+
+  <div class="admin-wrap">
+    <div class="panel" id="login-panel">
+      <form id="login-form">
+        <div class="field">
+          <label for="password">Admin password</label>
+          <input type="password" id="password" autocomplete="current-password" />
+        </div>
+        <button class="btn" id="login-btn" type="submit">Log in</button>
+        <div class="error-msg" id="login-error"></div>
+      </form>
+    </div>
+
+    <div id="admin-area" style="display:none">
+      <div class="panel">
+        <h3 style="margin-top:0">Upload image</h3>
+        <form id="upload-form">
+          <div class="field">
+            <label for="file">Image file</label>
+            <input type="file" id="file" name="file" accept="image/*" required />
+          </div>
+          <div class="field">
+            <label for="caption">Caption</label>
+            <input type="text" id="caption" name="caption" placeholder="Short title" />
+          </div>
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Prompt, notes, story…"></textarea>
+          </div>
+          <div class="field">
+            <label for="tags">Tags (comma-separated)</label>
+            <input type="text" id="tags" name="tags" placeholder="cyberpunk, portrait, neon" />
+          </div>
+          <div class="field">
+            <label for="created_date">Created date</label>
+            <input type="date" id="created_date" name="created_date" />
+          </div>
+          <div class="field">
+            <label for="sequence">Sequence number</label>
+            <input type="number" id="sequence" name="sequence" placeholder="Position in the novel, e.g. 1" min="0" step="1" />
+          </div>
+          <button class="btn" id="upload-btn" type="submit">Upload</button>
+          <div class="error-msg" id="upload-error"></div>
+          <div class="success-msg" id="upload-success"></div>
+        </form>
+      </div>
+
+      <p style="color:var(--text-dim); font-size:14px;">
+        To edit or delete an existing image, go to the <a href="/">gallery</a> — Edit
+        and Delete links appear under each thumbnail while you're logged in.
+      </p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <a href="https://www.buymeacoffee.com/jonesie">
+      <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=jonesie&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy me a coffee" />
+    </a>
+  </footer>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
