@@ -5,6 +5,7 @@
   const searchInput = document.getElementById("search");
   const tagsRow = document.getElementById("tags-row");
   const logoutBtn = document.getElementById("logout-btn");
+  const adminBtn = document.getElementById("admin-btn");
   const editModal = document.getElementById("edit-modal");
   const editForm = document.getElementById("edit-form");
   const editCloseBtn = document.getElementById("edit-close-btn");
@@ -145,12 +146,14 @@
     const res = await fetch("/api/admin/session");
     const data = await res.json();
     document.body.classList.toggle("is-admin", data.authenticated);
+    adminBtn.style.display = data.authenticated ? "inline-block" : "none";
     logoutBtn.style.display = data.authenticated ? "inline-block" : "none";
   }
 
   logoutBtn.addEventListener("click", async () => {
     await fetch("/api/admin/logout", { method: "POST" });
     document.body.classList.remove("is-admin");
+    adminBtn.style.display = "none";
     logoutBtn.style.display = "none";
   });
 
