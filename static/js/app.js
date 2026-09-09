@@ -17,6 +17,7 @@
   const editCreatedDate = document.getElementById("edit-created_date");
   const editSequence = document.getElementById("edit-sequence");
   const editPreviewImg = document.getElementById("edit-preview-img");
+  const rotateControls = document.getElementById("rotate-controls");
   const rotateLeftBtn = document.getElementById("rotate-left-btn");
   const rotateRightBtn = document.getElementById("rotate-right-btn");
 
@@ -27,6 +28,7 @@
   let activeTag = "";
   let searchDebounce = null;
   let editingId = null;
+  let editingIsVideo = false;
 
   function escapeHtml(s) {
     return (s || "").replace(/[&<>"']/g, (c) => ({
@@ -71,8 +73,12 @@
     const cap = escapeHtml(img.caption || "");
     const desc = escapeHtml(img.description || "");
     const date = escapeHtml(formatCardDate(img.created_date));
+    const isVideo = img.media_type === "video";
     return `<div class="card" data-id="${img.id}">
-      <img src="/images/thumb/${img.filename_thumb}" loading="lazy" alt="${cap}" />
+      <div class="card-thumb">
+        <img src="/images/thumb/${img.filename_thumb}" loading="lazy" alt="${cap}" />
+        ${isVideo ? `<span class="video-badge" aria-hidden="true">▶</span>` : ""}
+      </div>
       ${cap ? `<div class="caption">${cap}</div>` : ""}
       ${desc ? `<div class="description">${desc}</div>` : ""}
       ${date ? `<div class="date">${date}</div>` : ""}
@@ -165,9 +171,11 @@
     if (!res.ok) return;
     const img = await res.json();
     editingId = img.id;
+    editingIsVideo = img.media_type === "video";
     editError.textContent = "";
     editPreviewImg.src = `/images/thumb/${img.filename_thumb}`;
     editPreviewImg.alt = img.caption || "";
+    rotateControls.style.display = editingIsVideo ? "none" : "flex";
     editCaption.value = img.caption || "";
     editDescription.value = img.description || "";
     editTags.value = (img.tags || []).join(", ");
@@ -187,7 +195,7 @@
   });
 
   async function rotateImage(degrees) {
-    if (!editingId) return;
+    if (!editingId || editingIsVideo) return;
     rotateLeftBtn.disabled = true;
     rotateRightBtn.disabled = true;
     editError.textContent = "";

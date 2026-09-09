@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS images (
     caption TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_date TEXT NOT NULL,
-    uploaded_at TEXT NOT NULL DEFAULT (datetime('now'))
+    uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
+    media_type TEXT NOT NULL DEFAULT 'image'
 );
 
 CREATE TABLE IF NOT EXISTS tags (
@@ -52,6 +53,8 @@ def _migrate(conn: sqlite3.Connection) -> None:
     cols = {row["name"] for row in conn.execute("PRAGMA table_info(images)")}
     if "sequence" not in cols:
         conn.execute("ALTER TABLE images ADD COLUMN sequence INTEGER")
+    if "media_type" not in cols:
+        conn.execute("ALTER TABLE images ADD COLUMN media_type TEXT NOT NULL DEFAULT 'image'")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_images_sequence ON images(sequence)")
     _shorten_legacy_ids(conn)
 
@@ -73,8 +76,8 @@ def _shorten_legacy_ids(conn: sqlite3.Connection) -> None:
         conn.execute(
             """INSERT INTO images
                (id, filename_full, filename_thumb, caption, description,
-                created_date, uploaded_at, sequence)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                created_date, uploaded_at, sequence, media_type)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 new_id,
                 row["filename_full"],
@@ -84,6 +87,7 @@ def _shorten_legacy_ids(conn: sqlite3.Connection) -> None:
                 row["created_date"],
                 row["uploaded_at"],
                 row["sequence"],
+                row["media_type"],
             ),
         )
         conn.execute("UPDATE image_tags SET image_id = ? WHERE image_id = ?", (new_id, old_id))

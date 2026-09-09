@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import auth, images
 from app.db import init_db
-from app.thumbnails import make_thumbnail, rotate_image as rotate_image_file
+from app.thumbnails import make_thumbnail, make_video_thumbnail, rotate_image as rotate_image_file
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "./data"))
 FULL_DIR = DATA_DIR / "images" / "full"
@@ -19,8 +19,11 @@ FULL_DIR.mkdir(parents=True, exist_ok=True)
 THUMB_DIR.mkdir(parents=True, exist_ok=True)
 CONTENT_DIR.mkdir(parents=True, exist_ok=True)
 
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
-MAX_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
+ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+ALLOWED_VIDEO_EXTENSIONS = {".mp4", ".mov", ".webm", ".m4v"}
+ALLOWED_EXTENSIONS = ALLOWED_IMAGE_EXTENSIONS | ALLOWED_VIDEO_EXTENSIONS
+MAX_IMAGE_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
+MAX_VIDEO_UPLOAD_BYTES = 500 * 1024 * 1024  # 500 MB
 
 app = FastAPI(title="Pix")
 init_db()
@@ -151,6 +154,10 @@ async def admin_upload_image(
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext or '(none)'}")
 
+    is_video = ext in ALLOWED_VIDEO_EXTENSIONS
+    media_type = "video" if is_video else "image"
+    max_bytes = MAX_VIDEO_UPLOAD_BYTES if is_video else MAX_IMAGE_UPLOAD_BYTES
+
     image_id = uuid.uuid4().hex
     full_name = f"{image_id}{ext}"
     thumb_name = f"{image_id}.webp"
@@ -160,17 +167,22 @@ async def admin_upload_image(
     with full_path.open("wb") as out:
         while chunk := await file.read(1024 * 1024):
             size += len(chunk)
-            if size > MAX_UPLOAD_BYTES:
+            if size > max_bytes:
                 out.close()
                 full_path.unlink(missing_ok=True)
-                raise HTTPException(status_code=413, detail="File too large (max 25MB)")
+                raise HTTPException(
+                    status_code=413, detail=f"File too large (max {max_bytes // (1024 * 1024)}MB)"
+                )
             out.write(chunk)
 
     try:
-        make_thumbnail(full_path, THUMB_DIR / thumb_name)
+        if is_video:
+            make_video_thumbnail(full_path, THUMB_DIR / thumb_name)
+        else:
+            make_thumbnail(full_path, THUMB_DIR / thumb_name)
     except Exception:
         full_path.unlink(missing_ok=True)
-        raise HTTPException(status_code=400, detail="Could not process image")
+        raise HTTPException(status_code=400, detail="Could not process file")
 
     real_id = images.create_image(
         filename_full=full_name,
@@ -180,6 +192,7 @@ async def admin_upload_image(
         tags_raw=tags,
         created_date=created_date,
         sequence=sequence_val,
+        media_type=media_type,
     )
     return images.get_image(real_id)
 
@@ -211,6 +224,8 @@ def admin_rotate_image(image_id: str, degrees: int = Form(...)):
     item = images.get_image(image_id)
     if not item:
         raise HTTPException(status_code=404, detail="Not found")
+    if item["media_type"] != "image":
+        raise HTTPException(status_code=400, detail="Rotation is only supported for images")
 
     old_full_path = FULL_DIR / item["filename_full"]
     old_thumb_path = THUMB_DIR / item["filename_thumb"]

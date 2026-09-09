@@ -1,3 +1,5 @@
+import subprocess
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -42,3 +44,30 @@ def rotate_image(src_path: Path, dest_path: Path, degrees: int) -> None:
     save_kwargs = {"quality": 92} if fmt == "JPEG" else {}
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     rotated.save(dest_path, format=fmt, **save_kwargs)
+
+
+def make_video_thumbnail(src_path: Path, dest_path: Path) -> None:
+    """Grab a frame from a video and thumbnail it the same way as a photo."""
+    with tempfile.TemporaryDirectory() as tmp:
+        frame_path = Path(tmp) / "frame.jpg"
+        result = subprocess.run(
+            [
+                "ffmpeg", "-y",
+                "-ss", "0.5",
+                "-i", str(src_path),
+                "-frames:v", "1",
+                "-q:v", "2",
+                str(frame_path),
+            ],
+            capture_output=True,
+        )
+        if result.returncode != 0 or not frame_path.is_file():
+            # Very short clips may not have a frame at 0.5s — fall back to
+            # whatever the first frame is.
+            result = subprocess.run(
+                ["ffmpeg", "-y", "-i", str(src_path), "-frames:v", "1", "-q:v", "2", str(frame_path)],
+                capture_output=True,
+            )
+            if result.returncode != 0 or not frame_path.is_file():
+                raise RuntimeError(f"ffmpeg could not extract a frame: {result.stderr.decode(errors='replace')}")
+        make_thumbnail(frame_path, dest_path)

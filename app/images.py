@@ -45,15 +45,26 @@ def create_image(
     tags_raw: str,
     created_date: Optional[str],
     sequence: Optional[int] = None,
+    media_type: str = "image",
 ) -> str:
     created = created_date or date.today().isoformat()
     with get_conn() as conn:
         image_id = generate_id(conn)
         conn.execute(
             """INSERT INTO images
-               (id, filename_full, filename_thumb, caption, description, created_date, sequence)
-               VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (image_id, filename_full, filename_thumb, caption, description, created, sequence),
+               (id, filename_full, filename_thumb, caption, description,
+                created_date, sequence, media_type)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                image_id,
+                filename_full,
+                filename_thumb,
+                caption,
+                description,
+                created,
+                sequence,
+                media_type,
+            ),
         )
         tag_ids = _tag_ids(conn, _split_tags(tags_raw))
         conn.executemany(
@@ -124,6 +135,7 @@ def _to_dict(conn, row) -> dict:
         "sequence": row["sequence"],
         "created_date": row["created_date"],
         "uploaded_at": row["uploaded_at"],
+        "media_type": row["media_type"],
         "tags": _row_tags(conn, row["id"]),
     }
 

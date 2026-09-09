@@ -7,6 +7,7 @@
   }
 
   const imageEl = document.getElementById("image-full");
+  const videoEl = document.getElementById("video-full");
   const captionEl = document.getElementById("image-caption");
   const descEl = document.getElementById("image-description");
   const dateEl = document.getElementById("image-date");
@@ -32,6 +33,7 @@
       const res = await fetch(`/api/images/${imageId}`);
       if (!res.ok) return;
       const img = await res.json();
+      if (img.media_type === "video") return; // don't pre-fetch a whole video
       const im = new Image();
       im.src = `/images/full/${img.filename_full}`;
     } catch (_) {}
@@ -48,8 +50,21 @@
     }
     const img = await res.json();
 
-    imageEl.src = `/images/full/${img.filename_full}`;
-    imageEl.alt = img.caption || "";
+    // Stop any playback before switching media.
+    videoEl.pause();
+    videoEl.removeAttribute("src");
+    videoEl.load();
+
+    if (img.media_type === "video") {
+      videoEl.src = `/images/full/${img.filename_full}`;
+      videoEl.classList.remove("hidden");
+      imageEl.classList.add("hidden");
+    } else {
+      imageEl.src = `/images/full/${img.filename_full}`;
+      imageEl.alt = img.caption || "";
+      imageEl.classList.remove("hidden");
+      videoEl.classList.add("hidden");
+    }
 
     captionEl.textContent = img.caption || "Untitled";
     captionEl.style.display = img.caption ? "block" : "none";
