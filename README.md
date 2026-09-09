@@ -103,7 +103,7 @@ all against the same API above (no separate backend needed). On first launch it
 asks for your server's URL and remembers it, so one APK works against anyone's
 deployment; that can be changed later from the settings icon on the gallery screen.
 
-<img src="docs/screenshot-android.png" alt="pix Android app" width="320">
+![pix Android app](docs/screenshot-android.png)
 
 To build and run it:
 
