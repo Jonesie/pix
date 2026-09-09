@@ -47,6 +47,23 @@ when an image is opened from the index.
   `tags`, `created_date`) — admin only
 - `DELETE /api/admin/images/{id}` — admin only
 
+## Android app
+
+A native Kotlin/Jetpack Compose client lives in `android/` — browse, search/filter,
+log in, upload (camera or gallery picker, images or video), and edit/rotate/delete,
+all against the same API above (no separate backend needed). It talks to
+`https://pix.jonesie.net.nz` by default (see `ApiConfig.BASE_URL`).
+
+To build and run it:
+
+```bash
+cd android
+./gradlew assembleDebug   # -> app/build/outputs/apk/debug/app-debug.apk
+```
+
+Or open `android/` in Android Studio and run it on an emulator or a phone over USB.
+Needs JDK 17+ for the Gradle build (Android Studio bundles its own).
+
 ## Production deploy
 
 Deployed as the `pix` service in `~/dev/home_nginx`'s Docker Compose
