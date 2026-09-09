@@ -472,13 +472,3 @@ body.image-view-body .back-btn {
 
 .error-msg { color: #ff6b8b; font-size: 13px; margin-top: 8px; }
 .success-msg { color: #6bffb0; font-size: 13px; margin-top: 8px; }
-
-.site-footer {
-  text-align: center;
-  padding: 40px 20px 60px;
-}
-
-.site-footer img {
-  height: 42px;
-  vertical-align: middle;
-}

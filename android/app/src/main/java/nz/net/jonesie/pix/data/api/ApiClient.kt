@@ -9,21 +9,26 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-object ApiConfig {
-    const val BASE_URL = "https://pix.jonesie.net.nz/"
-}
-
 object ApiClient {
 
     val json = Json { ignoreUnknownKeys = true }
 
     private var api: PixApi? = null
+    private var cachedBaseUrl: String? = null
 
+    /** Builds (or reuses) the Retrofit client for the currently configured server URL. */
     fun get(context: Context): PixApi {
-        return api ?: buildApi(context.applicationContext).also { api = it }
+        val baseUrl = ServerConfig.getBaseUrl(context)
+            ?: error("No server configured yet.")
+        val cached = api
+        if (cached != null && cachedBaseUrl == baseUrl) return cached
+        return buildApi(context.applicationContext, baseUrl).also {
+            api = it
+            cachedBaseUrl = baseUrl
+        }
     }
 
-    private fun buildApi(context: Context): PixApi {
+    private fun buildApi(context: Context, baseUrl: String): PixApi {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
         }
@@ -37,7 +42,7 @@ object ApiClient {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(ApiConfig.BASE_URL)
+            .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

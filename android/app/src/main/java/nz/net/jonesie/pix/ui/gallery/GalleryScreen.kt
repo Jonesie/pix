@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,6 +79,7 @@ fun GalleryScreen(
     onOpenLogin: () -> Unit,
     onOpenUpload: () -> Unit,
     onOpenEdit: (String) -> Unit,
+    onOpenServerSettings: () -> Unit,
 ) {
     val container = LocalAppContainer.current
     val viewModel: GalleryViewModel = viewModel(factory = viewModelFactory {
@@ -123,6 +126,9 @@ fun GalleryScreen(
                         IconButton(onClick = onOpenLogin) {
                             Icon(Icons.Default.Login, contentDescription = "Log in")
                         }
+                    }
+                    IconButton(onClick = onOpenServerSettings) {
+                        Icon(Icons.Default.Settings, contentDescription = "Server settings")
                     }
                 },
             )
@@ -234,6 +240,7 @@ private fun GalleryCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
+    val context = LocalContext.current
     Column {
         Box(
             modifier = Modifier
@@ -243,7 +250,7 @@ private fun GalleryCard(
                 .clickable(onClick = onClick),
         ) {
             AsyncImage(
-                model = MediaUrls.thumb(image.filename_thumb),
+                model = MediaUrls.thumb(context, image.filename_thumb),
                 contentDescription = image.caption,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),

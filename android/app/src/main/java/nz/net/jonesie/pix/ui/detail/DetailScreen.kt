@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -59,6 +60,7 @@ fun DetailScreen(
     onNavigateTo: (String) -> Unit,
     onDeleted: () -> Unit,
 ) {
+    val context = LocalContext.current
     val container = LocalAppContainer.current
     val viewModel: DetailViewModel = viewModel(factory = viewModelFactory {
         initializer { DetailViewModel(container.repository, container.session, imageId) }
@@ -110,10 +112,10 @@ fun DetailScreen(
                         item {
                             Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
                                 if (image.isVideo) {
-                                    VideoPlayer(url = MediaUrls.full(image.filename_full), modifier = Modifier.fillMaxSize())
+                                    VideoPlayer(url = MediaUrls.full(context, image.filename_full), modifier = Modifier.fillMaxSize())
                                 } else {
                                     AsyncImage(
-                                        model = MediaUrls.full(image.filename_full),
+                                        model = MediaUrls.full(context, image.filename_full),
                                         contentDescription = image.caption,
                                         contentScale = ContentScale.Fit,
                                         modifier = Modifier.fillMaxSize(),

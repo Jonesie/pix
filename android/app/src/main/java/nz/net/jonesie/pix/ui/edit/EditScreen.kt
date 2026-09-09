@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +45,7 @@ import nz.net.jonesie.pix.ui.LocalAppContainer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditScreen(imageId: String, onBack: () -> Unit, onSaved: () -> Unit) {
+    val context = LocalContext.current
     val container = LocalAppContainer.current
     val viewModel: EditViewModel = viewModel(factory = viewModelFactory {
         initializer { EditViewModel(container.repository, imageId) }
@@ -81,7 +83,7 @@ fun EditScreen(imageId: String, onBack: () -> Unit, onSaved: () -> Unit) {
         ) {
             state.thumbFilename?.let { thumb ->
                 AsyncImage(
-                    model = MediaUrls.thumb(thumb),
+                    model = MediaUrls.thumb(context, thumb),
                     contentDescription = null,
                     modifier = Modifier.fillMaxWidth().aspectRatio(1f),
                 )

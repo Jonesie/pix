@@ -3,3 +3,13 @@
 __pycache__/
 *.pyc
 .venv/
+
+# Android release signing key — never commit this.
+*.keystore
+*.keystore.b64
+*.jks
+
+# Local packaging output from build.yml/release.yml steps run by hand.
+/dist/
+pix-site.tar.gz
+pix.apk

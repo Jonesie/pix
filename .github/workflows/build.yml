@@ -1,0 +1,52 @@
+name: Build
+
+# Validates that the Android app and the self-hostable site package still build on
+# every push/PR. Doesn't publish anything — see release.yml for that.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pix-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+  package-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package self-hostable site bundle
+        run: |
+          mkdir -p dist/pix
+          cp -r app static nginx dist/pix/
+          cp requirements.txt Dockerfile docker-compose.yml .env.example install.sh README.md dist/pix/
+          tar -czf pix-site.tar.gz -C dist pix
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pix-site.tar.gz
+          path: pix-site.tar.gz
+          retention-days: 7

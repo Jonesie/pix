@@ -1,0 +1,40 @@
+# Example nginx reverse-proxy config for pix.
+#
+# Copy to /etc/nginx/sites-available/pix (or your distro's equivalent), edit
+# `server_name` and the upstream address, symlink into sites-enabled, then
+# `nginx -t && systemctl reload nginx`.
+#
+# Assumes pix is already running and reachable at 127.0.0.1:8000 — either the
+# Docker container with `ports: ["8000:8000"]`, or `uvicorn` run directly on
+# the host. If nginx and the pix container share a Docker network instead,
+# replace 127.0.0.1:8000 with the container/service name and its port.
+
+server {
+    listen 80;
+    server_name pix.example.com;
+
+    # Video uploads go up to 500MB (see MAX_VIDEO_UPLOAD_BYTES in app/main.py) —
+    # nginx's default 1MB body limit would reject them before they reach pix.
+    client_max_body_size 512M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Large video uploads can take a while on a slow connection.
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+}
+
+# To serve over HTTPS, the simplest path is certbot's nginx plugin, which
+# rewrites this file for you:
+#
+#   sudo apt install certbot python3-certbot-nginx
+#   sudo certbot --nginx -d pix.example.com
+#
+# That adds the `listen 443 ssl` block, certificate paths, and an HTTP->HTTPS
+# redirect, and sets up auto-renewal.

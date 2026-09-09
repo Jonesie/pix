@@ -27,9 +27,12 @@ private fun parseErrorDetail(response: Response<*>, fallback: String): String {
 
 private fun String.toTextPart() = toRequestBody("text/plain".toMediaTypeOrNull())
 
-class PixRepository(context: Context) {
+class PixRepository(private val context: Context) {
 
-    private val api: PixApi = ApiClient.get(context)
+    // Resolved on every call rather than cached at construction time, since the
+    // container (and this repository) is built once at app startup, before the
+    // user may have entered a server URL yet.
+    private val api: PixApi get() = ApiClient.get(context)
 
     suspend fun listImages(query: String?, tag: String?, offset: Int, limit: Int = 30) =
         api.listImages(query?.takeIf { it.isNotBlank() }, tag?.takeIf { it.isNotBlank() }, offset, limit)
