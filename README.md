@@ -5,6 +5,8 @@ filterable by tag. Full-size media only loads when you open it; the index
 page shows generated thumbnails. Single admin login for uploading/editing —
 everyone else just browses.
 
+![pix gallery](docs/screenshot-web.png)
+
 ## Stack
 
 - FastAPI (Python) backend, SQLite for metadata, Pillow/ffmpeg for thumbnails.
@@ -100,6 +102,8 @@ log in, upload (camera or gallery picker, images or video), and edit/rotate/dele
 all against the same API above (no separate backend needed). On first launch it
 asks for your server's URL and remembers it, so one APK works against anyone's
 deployment; that can be changed later from the settings icon on the gallery screen.
+
+<img src="docs/screenshot-android.png" alt="pix Android app" width="320">
 
 To build and run it:
 

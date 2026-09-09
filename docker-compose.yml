@@ -1,6 +1,6 @@
-# Standalone local run/dev. Production deploy is via ~/dev/home_nginx's
-# docker-compose.yml, which builds this same Dockerfile as service "pix"
-# on the shared home_default network.
+# Standalone run: builds and starts pix on its own, bind-mounting ./data
+# for images/video and the SQLite DB. Put a reverse proxy (see nginx/) in
+# front of it for a real domain and HTTPS.
 services:
   pix:
     build: .
