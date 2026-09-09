@@ -97,6 +97,7 @@ when an image is opened from the index.
 - `GET /api/images?q=&tag=&offset=&limit=` — paginated public listing
 - `GET /api/images/{id}` — single image detail
 - `GET /api/tags` — tag list with counts
+- `GET /api/version` — `{version}`, shown in the About box in the UI and the app
 - `POST /api/admin/login` (form: `password`) — sets a signed session cookie
 - `POST /api/admin/logout`
 - `GET /api/admin/session` — `{authenticated: bool}`
@@ -166,6 +167,10 @@ Then add four repo secrets (Settings → Secrets and variables → Actions):
 `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. Keep `pix-release.keystore` itself
 somewhere safe and out of git — losing it means future releases can never
 upgrade over old installs.
+
+## License
+
+[MIT](LICENSE)
 
 ## Support
 

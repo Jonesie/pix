@@ -18,6 +18,7 @@
     <span style="color:var(--text-dim); font-size:14px;">Admin</span>
     <div style="flex:1"></div>
     <button class="btn btn-secondary" id="logout-btn" style="display:none">Log out</button>
+    <button class="btn btn-secondary" id="about-btn" type="button">About</button>
   </header>
 
   <div class="admin-wrap">
@@ -73,6 +74,20 @@
     </div>
   </div>
 
+  <div class="modal hidden" id="about-modal">
+    <div class="modal-inner about-modal-inner">
+      <button class="close-btn" id="about-close-btn" type="button">&times;</button>
+      <h3 style="margin-top:0">About _pix_</h3>
+      <p id="about-version" style="color:var(--text-dim)"></p>
+      <p>
+        <a href="https://github.com/Jonesie/pix" target="_blank" rel="noopener">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="https://jonesie.net.nz" target="_blank" rel="noopener">jonesie.net.nz</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/about.js"></script>
   <script src="/js/admin.js"></script>
 </body>
 </html>

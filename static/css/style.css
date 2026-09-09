@@ -446,6 +446,13 @@ body.image-view-body .back-btn {
   display: block;
 }
 
+.about-modal-inner {
+  max-width: 320px;
+  width: 100%;
+  padding: 24px;
+  display: block;
+}
+
 .edit-preview {
   display: flex;
   flex-direction: column;

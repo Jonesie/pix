@@ -25,6 +25,11 @@ ALLOWED_EXTENSIONS = ALLOWED_IMAGE_EXTENSIONS | ALLOWED_VIDEO_EXTENSIONS
 MAX_IMAGE_UPLOAD_BYTES = 25 * 1024 * 1024  # 25 MB
 MAX_VIDEO_UPLOAD_BYTES = 500 * 1024 * 1024  # 500 MB
 
+# Overwritten with the release tag (e.g. "1.2.0") by release.yml when packaging;
+# stays "dev" for local/unreleased checkouts.
+VERSION_FILE = Path(__file__).resolve().parent.parent / "VERSION"
+APP_VERSION = VERSION_FILE.read_text().strip() if VERSION_FILE.exists() else "dev"
+
 app = FastAPI(title="Pix")
 init_db()
 
@@ -77,6 +82,11 @@ def api_get_image(image_id: str):
 @app.get("/api/tags")
 def api_list_tags():
     return {"items": images.list_tags()}
+
+
+@app.get("/api/version")
+def api_version():
+    return {"version": APP_VERSION}
 
 
 @app.get("/images/thumb/{filename}")

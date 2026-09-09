@@ -41,8 +41,8 @@ jobs:
       - name: Package self-hostable site bundle
         run: |
           mkdir -p dist/pix
-          cp -r app static nginx dist/pix/
-          cp requirements.txt Dockerfile docker-compose.yml .env.example install.sh README.md dist/pix/
+          cp -r app static nginx docs dist/pix/
+          cp requirements.txt Dockerfile docker-compose.yml .env.example install.sh README.md VERSION LICENSE dist/pix/
           tar -czf pix-site.tar.gz -C dist pix
 
       - uses: actions/upload-artifact@v4

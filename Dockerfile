@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 COPY static ./static
+COPY VERSION ./
 
 ENV DATA_DIR=/data
 VOLUME ["/data"]

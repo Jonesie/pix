@@ -26,6 +26,10 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Determine version
+        id: version
+        run: echo "name=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
       - name: Decode signing key
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -42,7 +46,10 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: >
+          ./gradlew assembleRelease
+          -PversionName=${{ steps.version.outputs.name }}
+          -PversionCode=${{ github.run_number }}
 
       - name: Rename APK
         run: cp app/build/outputs/apk/release/app-release.apk ../pix.apk
@@ -61,8 +68,9 @@ jobs:
       - name: Package self-hostable site bundle
         run: |
           mkdir -p dist/pix
-          cp -r app static nginx dist/pix/
-          cp requirements.txt Dockerfile docker-compose.yml .env.example install.sh README.md dist/pix/
+          cp -r app static nginx docs dist/pix/
+          cp requirements.txt Dockerfile docker-compose.yml .env.example install.sh README.md LICENSE dist/pix/
+          echo "${GITHUB_REF_NAME#v}" > dist/pix/VERSION
           tar -czf pix-site.tar.gz -C dist pix
 
       - uses: actions/upload-artifact@v4

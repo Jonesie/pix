@@ -13,8 +13,10 @@ android {
         applicationId = "nz.net.jonesie.pix"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        // Overridden by release.yml (-PversionCode=<run number> -PversionName=<tag>) for
+        // published releases; these are just placeholders for local/debug builds.
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = (project.findProperty("versionName") as String?) ?: "dev"
     }
 
     // Release builds sign with a real key when one is supplied via env vars (CI releases);
@@ -52,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
