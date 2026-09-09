@@ -122,6 +122,28 @@ cd android
 Or open `android/` in Android Studio and run it on an emulator or a phone over USB.
 Needs JDK 17+ for the Gradle build (Android Studio bundles its own).
 
+### Installing a downloaded APK
+
+pix isn't on the Play Store, so grab `pix.apk` from the [latest
+release](https://github.com/Jonesie/pix/releases/latest) and install it over
+USB with [adb](https://developer.android.com/tools/adb) (part of the Android
+SDK platform-tools, or `sudo apt install android-sdk-platform-tools` /
+`brew install android-platform-tools`):
+
+```bash
+adb install pix.apk
+```
+
+Enable Developer options → USB debugging on the device first, plug it in,
+and accept the "Allow USB debugging" prompt that appears on screen.
+Re-running the same command with an app already installed updates it in
+place; `adb install -r pix.apk` is only needed if adb complains about an
+existing install with a different signature.
+
+No computer handy? Copy the APK to the device (e.g. a cloud drive or USB
+cable) and open it there — Android will prompt to allow installs from that
+source the first time.
+
 ## Releases
 
 Pushing a tag like `v1.0.0` runs [`.github/workflows/release.yml`](.github/workflows/release.yml),
