@@ -7,6 +7,15 @@ everyone else just browses.
 
 ![pix gallery](docs/screenshot-web.png)
 
+![pix Android app](docs/screenshot-android.png)
+
+Browse a scrollable, searchable gallery filtered by tag, with full-size
+photos and video only loading when you open them. Log in as admin to
+upload (camera or gallery picker, photos or video), edit captions,
+descriptions, tags and dates, rotate images, or delete — from the web UI
+or the native Android app, which talks to the same API and works against
+any pix server you point it at.
+
 ## Stack
 
 - FastAPI (Python) backend, SQLite for metadata, Pillow/ffmpeg for thumbnails.
@@ -102,8 +111,6 @@ log in, upload (camera or gallery picker, images or video), and edit/rotate/dele
 all against the same API above (no separate backend needed). On first launch it
 asks for your server's URL and remembers it, so one APK works against anyone's
 deployment; that can be changed later from the settings icon on the gallery screen.
-
-![pix Android app](docs/screenshot-android.png)
 
 To build and run it:
 
