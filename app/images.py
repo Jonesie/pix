@@ -1,8 +1,22 @@
-import uuid
+import secrets
 from datetime import date
 from typing import Optional
 
 from app.db import get_conn
+
+# Short, URL-friendly image ids. Excludes 0/1/i/l/o so ids are unambiguous
+# to read aloud or type by hand.
+ID_ALPHABET = "23456789abcdefghjkmnpqrstuvwxyz"
+ID_LENGTH = 6
+
+
+def generate_id(conn) -> str:
+    for _ in range(20):
+        candidate = "".join(secrets.choice(ID_ALPHABET) for _ in range(ID_LENGTH))
+        exists = conn.execute("SELECT 1 FROM images WHERE id = ?", (candidate,)).fetchone()
+        if not exists:
+            return candidate
+    raise RuntimeError("Could not generate a unique image id")
 
 
 def _split_tags(raw: str) -> list[str]:
@@ -32,9 +46,9 @@ def create_image(
     created_date: Optional[str],
     sequence: Optional[int] = None,
 ) -> str:
-    image_id = uuid.uuid4().hex
     created = created_date or date.today().isoformat()
     with get_conn() as conn:
+        image_id = generate_id(conn)
         conn.execute(
             """INSERT INTO images
                (id, filename_full, filename_thumb, caption, description, created_date, sequence)

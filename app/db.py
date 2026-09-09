@@ -53,6 +53,41 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if "sequence" not in cols:
         conn.execute("ALTER TABLE images ADD COLUMN sequence INTEGER")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_images_sequence ON images(sequence)")
+    _shorten_legacy_ids(conn)
+
+
+def _shorten_legacy_ids(conn: sqlite3.Connection) -> None:
+    # Images created before short ids were introduced still have their
+    # original 32-character uuid.hex id. Give them a short one instead.
+    # SQLite won't let a UPDATE repoint images.id while image_tags.image_id
+    # still references the old value, so insert-under-the-new-id, repoint
+    # the tags, then drop the old row — every step keeps the FK satisfied.
+    from app.images import ID_LENGTH, generate_id  # local import: avoid a cycle at module load
+
+    legacy = conn.execute(
+        f"SELECT * FROM images WHERE length(id) > {ID_LENGTH}"
+    ).fetchall()
+    for row in legacy:
+        old_id = row["id"]
+        new_id = generate_id(conn)
+        conn.execute(
+            """INSERT INTO images
+               (id, filename_full, filename_thumb, caption, description,
+                created_date, uploaded_at, sequence)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                new_id,
+                row["filename_full"],
+                row["filename_thumb"],
+                row["caption"],
+                row["description"],
+                row["created_date"],
+                row["uploaded_at"],
+                row["sequence"],
+            ),
+        )
+        conn.execute("UPDATE image_tags SET image_id = ? WHERE image_id = ?", (new_id, old_id))
+        conn.execute("DELETE FROM images WHERE id = ?", (old_id,))
 
 
 def init_db() -> None:
