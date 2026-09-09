@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import auth, images
 from app.db import init_db
-from app.thumbnails import make_thumbnail
+from app.thumbnails import make_thumbnail, rotate_image as rotate_image_file
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "./data"))
 FULL_DIR = DATA_DIR / "images" / "full"
@@ -203,6 +203,42 @@ def admin_update_image(
     )
     if not updated:
         raise HTTPException(status_code=404, detail="Not found")
+    return updated
+
+
+@app.post("/api/admin/images/{image_id}/rotate", dependencies=[Depends(require_admin)])
+def admin_rotate_image(image_id: str, degrees: int = Form(...)):
+    item = images.get_image(image_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    old_full_path = FULL_DIR / item["filename_full"]
+    old_thumb_path = THUMB_DIR / item["filename_thumb"]
+    if not old_full_path.is_file():
+        raise HTTPException(status_code=404, detail="Image file missing")
+
+    # Rotate into fresh filenames rather than overwriting in place — the
+    # full/thumb responses are served with a week-long immutable cache
+    # header, so reusing the old name would leave stale copies on screen.
+    ext = old_full_path.suffix
+    new_id = uuid.uuid4().hex
+    new_full_name = f"{new_id}{ext}"
+    new_thumb_name = f"{new_id}.webp"
+    new_full_path = FULL_DIR / new_full_name
+
+    try:
+        rotate_image_file(old_full_path, new_full_path, degrees)
+        make_thumbnail(new_full_path, THUMB_DIR / new_thumb_name)
+    except ValueError:
+        new_full_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail="Unsupported rotation")
+    except Exception:
+        new_full_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail="Could not rotate image")
+
+    updated = images.update_image_files(image_id, new_full_name, new_thumb_name)
+    old_full_path.unlink(missing_ok=True)
+    old_thumb_path.unlink(missing_ok=True)
     return updated
 
 

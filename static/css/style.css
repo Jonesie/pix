@@ -421,6 +421,30 @@ body.image-view-body .back-btn {
   display: block;
 }
 
+.edit-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.rotate-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.rotate-controls .btn {
+  padding: 8px 14px;
+  font-size: 13px;
+}
+
 .error-msg { color: #ff6b8b; font-size: 13px; margin-top: 8px; }
 .success-msg { color: #6bffb0; font-size: 13px; margin-top: 8px; }
 

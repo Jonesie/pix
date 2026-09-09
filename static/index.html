@@ -29,6 +29,13 @@
     <div class="modal-inner edit-modal-inner">
       <button class="close-btn" id="edit-close-btn" type="button">&times;</button>
       <h3 style="margin-top:0">Edit image</h3>
+      <div class="field edit-preview">
+        <img id="edit-preview-img" src="" alt="" />
+        <div class="rotate-controls">
+          <button type="button" class="btn btn-secondary" id="rotate-left-btn">⟲ Rotate left</button>
+          <button type="button" class="btn btn-secondary" id="rotate-right-btn">⟳ Rotate right</button>
+        </div>
+      </div>
       <form id="edit-form">
         <div class="field">
           <label for="edit-caption">Caption</label>

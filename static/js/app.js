@@ -16,6 +16,9 @@
   const editTags = document.getElementById("edit-tags");
   const editCreatedDate = document.getElementById("edit-created_date");
   const editSequence = document.getElementById("edit-sequence");
+  const editPreviewImg = document.getElementById("edit-preview-img");
+  const rotateLeftBtn = document.getElementById("rotate-left-btn");
+  const rotateRightBtn = document.getElementById("rotate-right-btn");
 
   let offset = 0;
   let hasMore = true;
@@ -163,6 +166,8 @@
     const img = await res.json();
     editingId = img.id;
     editError.textContent = "";
+    editPreviewImg.src = `/images/thumb/${img.filename_thumb}`;
+    editPreviewImg.alt = img.caption || "";
     editCaption.value = img.caption || "";
     editDescription.value = img.description || "";
     editTags.value = (img.tags || []).join(", ");
@@ -180,6 +185,37 @@
   editModal.addEventListener("click", (e) => {
     if (e.target === editModal) closeEditModal();
   });
+
+  async function rotateImage(degrees) {
+    if (!editingId) return;
+    rotateLeftBtn.disabled = true;
+    rotateRightBtn.disabled = true;
+    editError.textContent = "";
+    try {
+      const formData = new FormData();
+      formData.set("degrees", String(degrees));
+      const res = await fetch(`/api/admin/images/${editingId}/rotate`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        editError.textContent = err.detail || "Rotate failed.";
+        return;
+      }
+      const updated = await res.json();
+      editPreviewImg.src = `/images/thumb/${updated.filename_thumb}`;
+      const card = gallery.querySelector(`.card[data-id="${updated.id}"]`);
+      const cardImg = card && card.querySelector("img");
+      if (cardImg) cardImg.src = `/images/thumb/${updated.filename_thumb}`;
+    } finally {
+      rotateLeftBtn.disabled = false;
+      rotateRightBtn.disabled = false;
+    }
+  }
+
+  rotateLeftBtn.addEventListener("click", () => rotateImage(-90));
+  rotateRightBtn.addEventListener("click", () => rotateImage(90));
 
   editForm.addEventListener("submit", async (e) => {
     e.preventDefault();

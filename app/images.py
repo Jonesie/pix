@@ -63,6 +63,19 @@ def create_image(
     return image_id
 
 
+def update_image_files(image_id: str, filename_full: str, filename_thumb: str) -> Optional[dict]:
+    with get_conn() as conn:
+        row = conn.execute("SELECT * FROM images WHERE id = ?", (image_id,)).fetchone()
+        if not row:
+            return None
+        conn.execute(
+            "UPDATE images SET filename_full = ?, filename_thumb = ? WHERE id = ?",
+            (filename_full, filename_thumb, image_id),
+        )
+        row = conn.execute("SELECT * FROM images WHERE id = ?", (image_id,)).fetchone()
+        return _to_dict(conn, row)
+
+
 def update_image(
     image_id: str,
     caption: str,
